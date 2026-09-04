@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production') || config('app.env') === 'production' || str_contains(request()->getHost(), 'onrender.com')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         View::composer('*', function ($view) {
             try {
                 $setting = Setting::latest()->first();
