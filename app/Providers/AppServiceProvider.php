@@ -26,10 +26,15 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        View::composer('*', function ($view) {
+        View::composer(['public.*', 'admin.*', 'siswa.*', 'auth.*', 'dashboard'], function ($view) {
             try {
-                $setting = Setting::latest()->first();
-                $allPages = Page::where('aktif', true)->orderBy('urutan')->get();
+                $setting = \Illuminate\Support\Facades\Cache::remember('global_website_setting', 60, function () {
+                    return Setting::latest()->first();
+                });
+
+                $allPages = \Illuminate\Support\Facades\Cache::remember('global_nav_pages', 60, function () {
+                    return Page::where('aktif', true)->orderBy('urutan')->get();
+                });
             } catch (\Throwable $e) {
                 $setting = null;
                 $allPages = collect();

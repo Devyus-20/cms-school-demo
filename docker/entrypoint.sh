@@ -35,5 +35,13 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
     php artisan migrate --force --seed || true
 fi
 
+# Optimize Laravel in production
+if [ "$APP_ENV" = "production" ]; then
+    echo "Optimizing application cache for fast performance..."
+    php artisan config:cache || true
+    php artisan route:cache || true
+    php artisan view:cache || true
+fi
+
 # Start Supervisor (runs PHP-FPM + Nginx)
 exec /usr/bin/supervisord -c /etc/supervisord.conf
