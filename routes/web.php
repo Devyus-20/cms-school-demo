@@ -20,27 +20,101 @@ use Illuminate\Support\Facades\Route;
 
 // ======================== SYSTEM & DATABASE INITIALIZER ========================
 Route::get('/init-db', function () {
+    $dbConnection = config('database.default');
+    $dbHost = config("database.connections.{$dbConnection}.host", 'localhost');
+    $dbName = config("database.connections.{$dbConnection}.database", 'unknown');
+    
+    $logs = [];
+    $error = null;
+    $success = false;
+
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate --force --seed');
-        $output = \Illuminate\Support\Facades\Artisan::output();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Database migrations & demo accounts seeded successfully!',
-            'artisan_output' => $output,
-            'demo_accounts' => [
-                'super_admin' => ['email' => 'admin@demo.com', 'password' => 'password123'],
-                'guru' => ['email' => 'guru@demo.com', 'password' => 'password123'],
-                'siswa' => ['email' => 'siswa@demo.com', 'password' => 'password123', 'nis' => '2026001'],
-            ],
-            'home_url' => url('/'),
-        ]);
+        // Test connection
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        $logs[] = "Koneksi database ({$dbConnection} -> {$dbHost}/{$dbName}) BERHASIL!";
+
+        // Run migrations
+        \Illuminate\Support\Facades\Artisan::call('migrate --force');
+        $logs[] = "Migrasi tabel:\n" . trim(\Illuminate\Support\Facades\Artisan::output());
+
+        // Run seeder
+        \Illuminate\Support\Facades\Artisan::call('db:seed --force');
+        $logs[] = "Seeding data default & akun demo:\n" . trim(\Illuminate\Support\Facades\Artisan::output());
+
+        $success = true;
     } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ], 500);
+        $error = $e->getMessage();
+        $logs[] = "ERROR: " . $e->getMessage();
     }
+
+    $statusColor = $success ? 'emerald' : 'rose';
+    $statusTitle = $success ? 'Database Berhasil Diinisialisasi! 🎉' : 'Inisialisasi Database Mengalami Kendala';
+    $statusDesc = $success 
+        ? 'Seluruh tabel dan akun demo telah siap digunakan.' 
+        : 'Periksa pesan error di bawah ini untuk memastikan koneksi database sudah benar.';
+
+    $html = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inisialisasi Database - CMS Sekolah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-{$statusColor}-500/20 text-{$statusColor}-400 border border-{$statusColor}-500/30 flex items-center justify-center font-bold text-xl">
+                {$statusColor[0]}
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black text-white">{$statusTitle}</h1>
+                <p class="text-xs sm:text-sm text-slate-400">{$statusDesc}</p>
+            </div>
+        </div>
+
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 font-mono text-xs text-slate-300 overflow-x-auto max-h-64 whitespace-pre-wrap">
+HTML;
+    $html .= htmlspecialchars(implode("\n\n", $logs));
+    $html .= <<<HTML
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
+            <h2 class="text-xs uppercase font-bold text-amber-400 tracking-wider">Kredensial Akun Demo:</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-700/80">
+                    <div class="font-bold text-white">Super Admin</div>
+                    <div class="text-slate-400">admin@demo.com</div>
+                    <div class="text-amber-300 font-mono text-[11px]">password123</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-700/80">
+                    <div class="font-bold text-white">Guru / Operator</div>
+                    <div class="text-slate-400">guru@demo.com</div>
+                    <div class="text-amber-300 font-mono text-[11px]">password123</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-700/80">
+                    <div class="font-bold text-white">Siswa Demo</div>
+                    <div class="text-slate-400">siswa@demo.com</div>
+                    <div class="text-amber-300 font-mono text-[11px]">password123</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <a href="/" class="flex-1 text-center px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20">
+                Buka Halaman Utama Website &rarr;
+            </a>
+            <a href="/login/admin" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm transition-all border border-slate-700">
+                Login Admin
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+HTML;
+
+    return response($html, $success ? 200 : 500)->header('Content-Type', 'text/html; charset=utf-8');
 })->name('system.init-db');
 
 Route::get('/health', fn() => response()->json(['status' => 'ok', 'time' => now()->toIso8601String()]));
