@@ -66,8 +66,7 @@ class DatabaseSeeder extends Seeder
         $permissionModels = [];
         foreach ($permissions as $pData) {
             $permissionModels[$pData['name']] = Permission::firstOrCreate(
-                ['name' => $pData['name']],
-                ['description' => $pData['description']]
+                ['name' => $pData['name']]
             );
         }
 
