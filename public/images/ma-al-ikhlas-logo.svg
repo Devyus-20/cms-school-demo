@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Logo MA Al Ikhlas">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f5132"/>
+      <stop offset="100%" stop-color="#1c7c4d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8e9a3"/>
+      <stop offset="100%" stop-color="#c79b14"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="180" height="180" rx="36" fill="url(#bg)"/>
+  <rect x="58" y="56" width="84" height="84" rx="16" fill="#ffffff" opacity="0.9"/>
+  <path d="M72 84h56" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M84 72v44" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M100 72v44" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M72 98h56" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M62 116c14-10 26-12 38-12 14 0 26 2 38 12" stroke="#c79b14" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <circle cx="100" cy="74" r="12" fill="url(#gold)"/>
+</svg>
