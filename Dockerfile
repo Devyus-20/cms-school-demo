@@ -45,7 +45,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions for Laravel storage & bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Copy Nginx and Supervisor configuration
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
