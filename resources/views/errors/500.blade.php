@@ -14,3 +14,10 @@
 @section('message')
 Sistem sedang mengalami gangguan teknis internal. Tim pengelola telah menerima pemberitahuan dan segera memperbaikinya.
 @endsection
+
+@section('extra_details')
+@if(isset($exception) && $exception->getMessage())
+<div class="text-rose-400 font-bold mb-1">Rincian Diagnostik:</div>
+<div>{{ $exception->getMessage() }}</div>
+@endif
+@endsection
