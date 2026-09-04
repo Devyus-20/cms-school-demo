@@ -18,6 +18,33 @@ use App\Http\Controllers\SiswaPortalController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
+// ======================== SYSTEM & DATABASE INITIALIZER ========================
+Route::get('/init-db', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate --force --seed');
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Database migrations & demo accounts seeded successfully!',
+            'artisan_output' => $output,
+            'demo_accounts' => [
+                'super_admin' => ['email' => 'admin@demo.com', 'password' => 'password123'],
+                'guru' => ['email' => 'guru@demo.com', 'password' => 'password123'],
+                'siswa' => ['email' => 'siswa@demo.com', 'password' => 'password123', 'nis' => '2026001'],
+            ],
+            'home_url' => url('/'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+})->name('system.init-db');
+
+Route::get('/health', fn() => response()->json(['status' => 'ok', 'time' => now()->toIso8601String()]));
+
 // ======================== PUBLIC PAGES ========================
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::get('/profil/detail/{slug}', [PublicController::class, 'showPageDetail'])->name('public.profil.detail');

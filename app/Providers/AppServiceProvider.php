@@ -23,11 +23,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-            $view->with('websiteSetting', Setting::latest()->first());
+            try {
+                $setting = Setting::latest()->first();
+                $allPages = Page::where('aktif', true)->orderBy('urutan')->get();
+            } catch (\Throwable $e) {
+                $setting = null;
+                $allPages = collect();
+            }
 
-            $allPages = Page::where('aktif', true)->orderBy('urutan')->get();
+            $view->with('websiteSetting', $setting);
+
             $grouped = [];
-
             foreach ($allPages as $page) {
                 $baseSlug = preg_replace('/-\d+$/', '', $page->slug);
                 if (!isset($grouped[$baseSlug])) {

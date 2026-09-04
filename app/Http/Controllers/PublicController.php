@@ -13,8 +13,14 @@ class PublicController extends Controller
 {
     public function index()
     {
-        $websiteSetting = Setting::latest()->first();
-        $allPages = Page::where('aktif', true)->orderBy('urutan')->get();
+        try {
+            $websiteSetting = Setting::latest()->first();
+            $allPages = Page::where('aktif', true)->orderBy('urutan')->get();
+        } catch (\Throwable $e) {
+            $websiteSetting = null;
+            $allPages = collect();
+        }
+
         $groupedPages = [];
         $allPagesMapped = [];
 
