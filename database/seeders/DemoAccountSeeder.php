@@ -26,7 +26,7 @@ class DemoAccountSeeder extends Seeder
             [
                 'name' => 'Demo Administrator',
                 'username' => 'admin_demo',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('YSCHOOLSISTEM123'),
                 'role_id' => $adminRole?->id_role,
                 'status' => 'active',
             ]

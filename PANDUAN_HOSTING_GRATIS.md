@@ -10,7 +10,7 @@ Setelah menjalankan database seeder (`php artisan migrate --seed` atau `php arti
 
 | Peran (Role) | Email / Username | Password | Deskripsi Akses & Fitur |
 | :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@demo.com` *(atau `admin_demo`)* | `password123` | Akses penuh: Kelola Pengguna, Role & Permission, Profil Sekolah, Berita/Pengumuman, Agenda, Galeri, Settings Website & PPDB. |
+| **Super Admin** | `admin@demo.com` *(atau `admin_demo`)* | `YSCHOOLSISTEM123` | Akses penuh: Kelola Pengguna, Role & Permission, Profil Sekolah, Berita/Pengumuman, Agenda, Galeri, Settings Website & PPDB. |
 | **Guru / Operator** | `guru@demo.com` *(atau `guru_demo`)* | `password123` | Akses Guru & Akademik: Manajemen Siswa, Input Presensi, Kelola Nilai & Raport, Tambah Berita Sekolah. |
 | **Siswa Demo** | `siswa@demo.com` *(atau `siswa_demo`)* | `password123` | Portal Siswa: Melihat Rekap Presensi Mandiri, Tugas & Materi Pembelajaran, Nilai Akademik, dan Ujian Online (CBT). |
 
